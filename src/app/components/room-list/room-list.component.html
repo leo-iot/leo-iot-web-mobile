@@ -1,1 +1,13 @@
-<p>room-list works!</p>
+<header>
+  <h1>Rooms</h1>
+</header>
+
+<main>
+  <section *ngFor="let floor of floors | keyvalue">
+    <h2>{{ floor.value.name }}</h2>
+
+    <ul>
+      <li *ngFor="let room of floor.value.rooms | keyvalue">{{ room.value.name }}</li>
+    </ul>
+  </section>
+</main>
