@@ -1,14 +1,18 @@
 
 
 header {
-  width: 100vw;
+  width: 80vw;
   height: 50px;
   background-color: #32ab4f;
   color: white;
-  padding: 0 20px;
+  padding: 0 10vw;
 
   display: flex;
   align-items: center;
+}
+
+header h1 {
+  margin: 0 !important;
 }
 
 main {

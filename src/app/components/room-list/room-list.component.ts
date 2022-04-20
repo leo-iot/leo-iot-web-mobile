@@ -2,6 +2,8 @@ import { Component, OnInit } from '@angular/core';
 import {MqttService} from "ngx-mqtt";
 import {BrokerService} from "../../services/broker.service";
 import {Floor} from "../../model/floor";
+import {Router} from "@angular/router";
+import {Room} from "../../model/room";
 
 @Component({
   selector: 'app-room-list',
@@ -11,8 +13,9 @@ import {Floor} from "../../model/floor";
 export class RoomListComponent implements OnInit {
 
   floors: Map<string, Floor> = new Map<string, Floor >()
+  searchQuery: string = "";
 
-  constructor(private broker: BrokerService) { }
+  constructor(private broker: BrokerService, private router: Router) { }
 
   ngOnInit(): void {
     this.broker.floorObservable
@@ -23,4 +26,8 @@ export class RoomListComponent implements OnInit {
     this.broker.subscribeToEverything()
   }
 
+  async openDetailView(floor: Floor, roomObject: any) {
+    const room = roomObject as Room
+    await this.router.navigate([`room/${floor.name}/${room.name}`])
+  }
 }

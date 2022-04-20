@@ -3,11 +3,19 @@
 </header>
 
 <main>
+  <nav>
+    <mat-form-field>
+      <input matInput placeholder="search" [(ngModel)]="searchQuery">
+    </mat-form-field>
+  </nav>
+
   <section *ngFor="let floor of floors | keyvalue">
     <h2>{{ floor.value.name }}</h2>
 
     <ul>
-      <li *ngFor="let room of floor.value.rooms | keyvalue">{{ room.value.name }}</li>
+      <li *ngFor="let room of floor.value.rooms | keyvalue" [style]="{'display': (room.key.includes(searchQuery) || !searchQuery) ? 'block' : 'none' }" (click)="openDetailView(floor.value, room.value)">
+        <span>{{ room.value.name }}</span>
+      </li>
     </ul>
   </section>
 </main>

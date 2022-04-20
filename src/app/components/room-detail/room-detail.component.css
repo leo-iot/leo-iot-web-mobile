@@ -1,0 +1,22 @@
+.room-detail {
+  position: fixed;
+  padding: 2vh;
+  z-index: -1;
+}
+
+.spinner-overlay {
+  position: fixed;
+  background-color: white;
+  z-index: 5;
+  width: 100vw;
+  height: 100vh;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.spinner-overlay .spinner {
+  width: 10%;
+  height: 10%;
+}

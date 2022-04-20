@@ -1,0 +1,10 @@
+<div class="room-detail" *ngIf="this.room">
+  <h2>{{ room.name }}</h2>
+  <ul>
+    <li *ngFor="let sensor of room.sensors | keyvalue">{{ sensor.key }}: {{ sensor.value.value.value }}</li>
+  </ul>
+</div>
+
+<div *ngIf="loading" class="spinner-overlay">
+  <mat-spinner [diameter]="50" color="primary"></mat-spinner>
+</div>
