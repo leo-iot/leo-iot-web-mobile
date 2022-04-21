@@ -20,7 +20,7 @@ export class RoomDetailComponent implements OnInit {
       const floorId = params.get('floorId')
       const roomId = params.get('roomId')
 
-      if (!this.broker.isSubscribedToEverything) {
+      if (!this.broker.isSubscribed) {
         this.broker.subscribeToEverything()
       }
 

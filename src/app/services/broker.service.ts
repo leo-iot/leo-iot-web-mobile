@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import {IMqttMessage, MqttService} from "ngx-mqtt";
 import {Floor} from "../model/floor";
 import {Room} from "../model/room";
-import {map, Observable, Subject} from "rxjs";
+import {BehaviorSubject, map, Observable, Subject} from "rxjs";
 import {Sensor} from "../model/sensor";
 
 @Injectable({
@@ -10,14 +10,17 @@ import {Sensor} from "../model/sensor";
 })
 export class BrokerService {
 
-  private floors: Map<string, Floor> = new Map<string, Floor>()
-  private floorSubject = new Subject<Map<string, Floor>>()
-  public isSubscribedToEverything = false
+  private floors = new BehaviorSubject<Map<string, Floor>>(new Map<string, Floor>())
+  private _isSubscribed = false;
+
+  get isSubscribed() {
+    return this._isSubscribed
+  }
 
   constructor(private mqtt: MqttService) { }
 
   subscribeToEverything() {
-    this.isSubscribedToEverything = true
+    this._isSubscribed = true;
     this.mqtt.observeRetained('+/+/+/state')
       .subscribe(payload => {
         this.evaluatePayload(payload)
@@ -26,7 +29,8 @@ export class BrokerService {
 
   evaluatePayload(payload: IMqttMessage) {
     const [floorString, roomString, sensorString, stateString] = payload.topic.split('/')
-    const floor = this.floors.get(floorString)
+    const floors = this.floors.getValue();
+    const floor = floors.get(floorString)
     if (floor) {
       const room = floor.rooms.get(roomString)
       if (room) {
@@ -39,19 +43,19 @@ export class BrokerService {
           console.log(error.message)
         }
 
-        this.floorSubject.next(this.floors)
+        this.floors.next(floors)
       } else {
         floor.rooms.set(roomString, {name: roomString, sensors: new Map<string, Sensor>()})
         this.evaluatePayload(payload)
       }
     } else {
-      this.floors.set(floorString, {name: floorString, rooms: new Map<string, Room>()})
+      floors.set(floorString, {name: floorString, rooms: new Map<string, Room>()})
       this.evaluatePayload(payload)
     }
   }
 
   get floorObservable(): Observable<Map<string, Floor>> {
-    return this.floorSubject
+    return this.floors
   }
 
   public findRoom(floorId: string, roomId: string): Observable<Room | undefined> {
@@ -59,5 +63,9 @@ export class BrokerService {
       map(floors => floors.get(floorId)),
       map(floor => floor ? floor.rooms.get(roomId) : undefined),
     )
+  }
+
+  get current() {
+    return this.floors
   }
 }
